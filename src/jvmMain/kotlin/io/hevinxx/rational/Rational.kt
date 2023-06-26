@@ -15,13 +15,20 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
     constructor(numerator: BigInteger, denominator: Int) : this(numerator, denominator.toBigInteger())
     constructor(numerator: BigInteger, denominator: Long) : this(numerator, denominator.toBigInteger())
 
+    fun isNaN(): Boolean = this == NaN
+    fun isInfinite(): Boolean = numerator != BigInteger.ZERO && denominator == BigInteger.ZERO
+    fun isFinite(): Boolean = denominator != BigInteger.ZERO
+    fun isZero(): Boolean = isFinite() && numerator == BigInteger.ZERO
+    fun isPosInf(): Boolean = isInfinite() && numerator > BigInteger.ZERO
+    fun isNegInf(): Boolean = isInfinite() && numerator < BigInteger.ZERO
+
     override fun compareTo(other: Rational): Int {
         return when {
             this == other -> 0
-            this == NaN -> 1
-            other == NaN -> -1
-            this == POSITIVE_INFINITY || other == NEGATIVE_INFINITY -> 1
-            this == NEGATIVE_INFINITY || other == POSITIVE_INFINITY -> -1
+            isNaN() -> 1
+            other.isNaN() -> -1
+            this.isPosInf() || other.isNegInf() -> 1
+            this.isNegInf() || other.isPosInf() -> -1
             else -> (numerator * other.denominator).compareTo(other.numerator * denominator)
         }
     }
@@ -47,19 +54,19 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
     }
 
     override fun toLong(): Long {
-        return when (this) {
-            NaN -> 0L
-            POSITIVE_INFINITY -> Long.MAX_VALUE
-            NEGATIVE_INFINITY -> Long.MIN_VALUE
+        return when {
+            isNaN() -> 0L
+            isPosInf() -> Long.MAX_VALUE
+            isNegInf() -> Long.MIN_VALUE
             else -> (numerator / denominator).toLong()
         }
     }
 
     fun toBigInteger(): BigInteger {
-        return when (this) {
-            NaN -> BigInteger.ZERO
-            POSITIVE_INFINITY -> throw NoSuchObjectException("BigInteger has no infinity.")
-            NEGATIVE_INFINITY -> throw NoSuchObjectException("BigInteger has no infinity.")
+        return when {
+            isNaN() -> BigInteger.ZERO
+            isPosInf() -> throw NoSuchObjectException("BigInteger has no infinity.")
+            isNegInf() -> throw NoSuchObjectException("BigInteger has no infinity.")
             else -> numerator / denominator
         }
     }
@@ -69,10 +76,12 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
     }
 
     override fun toString(): String {
-        return when (this) {
-            NaN -> "NaN"
-            POSITIVE_INFINITY -> "Infinity"
-            NEGATIVE_INFINITY -> "-Infinity"
+        return when {
+            isNaN() -> "NaN"
+            isPosInf() -> "Infinity"
+            isNegInf() -> "-Infinity"
+            isZero() -> "0"
+            denominator == BigInteger.ONE -> numerator.toString()
             else -> "$numerator/$denominator"
         }
     }
@@ -88,13 +97,15 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
     }
 
     fun reduced(): Rational {
-        return if (numerator == BigInteger.ZERO) {
-            if (denominator == BigInteger.ZERO) NaN else ZERO
-        } else if (denominator == BigInteger.ZERO) {
-            if (numerator > BigInteger.ZERO) POSITIVE_INFINITY else NEGATIVE_INFINITY
-        } else {
-            val gcd = numerator.gcd(denominator)
-            Rational(numerator / gcd, denominator / gcd)
+        return when {
+            isNaN() -> NaN
+            isPosInf() -> POSITIVE_INFINITY
+            isNegInf() -> NEGATIVE_INFINITY
+            isZero() -> ZERO
+            else -> {
+                val gcd = numerator.gcd(denominator)
+                Rational(numerator / gcd, denominator / gcd)
+            }
         }
     }
 

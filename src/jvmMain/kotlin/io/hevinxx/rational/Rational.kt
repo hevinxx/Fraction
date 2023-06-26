@@ -2,6 +2,7 @@ package io.hevinxx.rational
 
 import java.math.BigInteger
 import java.rmi.NoSuchObjectException
+import java.util.Objects
 
 class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(), Comparable<Rational> {
 
@@ -76,6 +77,16 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
         }
     }
 
+    override fun equals(other: Any?): Boolean {
+        return (other is Rational)
+                && numerator == other.numerator
+                && denominator == other.denominator
+    }
+
+    override fun hashCode(): Int {
+        return Objects.hash(numerator, denominator)
+    }
+
     fun reduced(): Rational {
         return if (numerator == BigInteger.ZERO) {
             if (denominator == BigInteger.ZERO) NaN else ZERO
@@ -87,18 +98,32 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
         }
     }
 
-    override fun equals(other: Any?): Boolean {
-        return when (other) {
-            is Rational -> {
-                val reduced = this.reduced()
-                val otherReduced = other.reduced()
-                return reduced.numerator == otherReduced.numerator && reduced.denominator == otherReduced.denominator
-            }
-            is Number -> {
-                TODO()
-            }
-            else -> false
-        }
+    operator fun plus(other: Rational): Rational {
+        return Rational(
+            numerator * other.denominator + denominator * other.numerator,
+            denominator * other.denominator
+        ).reduced()
+    }
+
+    operator fun minus(other: Rational): Rational {
+        return Rational(
+            numerator * other.denominator - denominator * other.numerator,
+            denominator * other.denominator
+        ).reduced()
+    }
+
+    operator fun times(other: Rational): Rational {
+        return Rational(
+            numerator * other.numerator,
+            denominator * other.denominator
+        ).reduced()
+    }
+
+    operator fun div(other: Rational): Rational {
+        return Rational(
+            numerator * other.denominator,
+            denominator * other.numerator
+        ).reduced()
     }
 
     companion object {

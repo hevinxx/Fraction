@@ -2,7 +2,7 @@ package io.hevinxx.rational
 
 import java.math.BigInteger
 import java.rmi.NoSuchObjectException
-import java.util.Objects
+import java.util.*
 
 class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(), Comparable<Rational> {
 
@@ -105,12 +105,20 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
         ).reduced()
     }
 
+    operator fun plus(other: Int): Rational = this + other.toRational()
+    operator fun plus(other: Long): Rational = this + other.toRational()
+    operator fun plus(other: BigInteger): Rational = this + other.toRational()
+
     operator fun minus(other: Rational): Rational {
         return Rational(
             numerator * other.denominator - denominator * other.numerator,
             denominator * other.denominator
         ).reduced()
     }
+
+    operator fun minus(other: Int): Rational = this - other.toRational()
+    operator fun minus(other: Long): Rational = this - other.toRational()
+    operator fun minus(other: BigInteger): Rational = this - other.toRational()
 
     operator fun times(other: Rational): Rational {
         return Rational(
@@ -119,12 +127,20 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
         ).reduced()
     }
 
+    operator fun times(other: Int): Rational = this * other.toRational()
+    operator fun times(other: Long): Rational = this * other.toRational()
+    operator fun times(other: BigInteger): Rational = this * other.toRational()
+
     operator fun div(other: Rational): Rational {
         return Rational(
             numerator * other.denominator,
             denominator * other.numerator
         ).reduced()
     }
+
+    operator fun div(other: Int): Rational = this / other.toRational()
+    operator fun div(other: Long): Rational = this / other.toRational()
+    operator fun div(other: BigInteger): Rational = this / other.toRational()
 
     companion object {
         val POSITIVE_INFINITY = Rational(1, 0)

@@ -1,4 +1,4 @@
-package io.hevinxx.rational
+package io.hevinxx.fraction
 
 import java.math.BigInteger
 import java.rmi.NoSuchObjectException

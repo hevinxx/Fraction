@@ -42,11 +42,16 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
     }
 
     override fun toDouble(): Double {
-        return numerator.toDouble() / denominator.toDouble()
+        return when {
+            isNaN() -> Double.NaN
+            isPosInf() -> Double.POSITIVE_INFINITY
+            isNegInf() -> Double.NEGATIVE_INFINITY
+            else -> numerator.toDouble() / denominator.toDouble()
+        }
     }
 
     override fun toFloat(): Float {
-        return numerator.toFloat() / denominator.toFloat()
+        return toDouble().toFloat()
     }
 
     override fun toInt(): Int {
@@ -69,6 +74,10 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
             isNegInf() -> throw NoSuchObjectException("BigInteger has no infinity.")
             else -> numerator / denominator
         }
+    }
+
+    fun toFraction(): Fraction {
+        return toDouble().toFraction()
     }
 
     override fun toShort(): Short {
@@ -119,6 +128,7 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
     operator fun plus(other: Int): Rational = this + other.toRational()
     operator fun plus(other: Long): Rational = this + other.toRational()
     operator fun plus(other: BigInteger): Rational = this + other.toRational()
+    operator fun plus(other: Fraction): Fraction = other + this
 
     operator fun minus(other: Rational): Rational {
         return Rational(
@@ -130,6 +140,7 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
     operator fun minus(other: Int): Rational = this - other.toRational()
     operator fun minus(other: Long): Rational = this - other.toRational()
     operator fun minus(other: BigInteger): Rational = this - other.toRational()
+    operator fun minus(other: Fraction): Fraction = this.toFraction() - other
 
     operator fun times(other: Rational): Rational {
         return Rational(
@@ -141,6 +152,7 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
     operator fun times(other: Int): Rational = this * other.toRational()
     operator fun times(other: Long): Rational = this * other.toRational()
     operator fun times(other: BigInteger): Rational = this * other.toRational()
+    operator fun times(other: Fraction): Fraction = other * this
 
     operator fun div(other: Rational): Rational {
         return Rational(
@@ -152,6 +164,7 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
     operator fun div(other: Int): Rational = this / other.toRational()
     operator fun div(other: Long): Rational = this / other.toRational()
     operator fun div(other: BigInteger): Rational = this / other.toRational()
+    operator fun div(other: Fraction): Fraction = this.toFraction() / other
 
     companion object {
         val POSITIVE_INFINITY = Rational(1, 0)

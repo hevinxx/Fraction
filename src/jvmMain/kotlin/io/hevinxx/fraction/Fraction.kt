@@ -34,6 +34,8 @@ class Fraction(val numerator: Double, val denominator: Double) : Number(), Compa
             this == other -> 0
             isNaN() -> 1
             other.isNaN() -> -1
+            this.isPosInf() && other.isPosInf() -> 0
+            this.isNegInf() && other.isNegInf() -> 0
             this.isPosInf() || other.isNegInf() -> 1
             this.isNegInf() || other.isPosInf() -> -1
             else -> (numerator * other.denominator).compareTo(other.numerator * denominator)
@@ -150,9 +152,9 @@ class Fraction(val numerator: Double, val denominator: Double) : Number(), Compa
     operator fun div(other: BigInteger): Fraction = this / other.toDouble().toFraction()
 
     companion object {
-        val POSITIVE_INFINITY = Fraction(1, 0)
-        val NEGATIVE_INFINITY = Fraction(-1, 0)
-        val NaN = Fraction(0, 0)
-        val ZERO = Fraction(0, 1)
+        val POSITIVE_INFINITY = 1.0 over 0
+        val NEGATIVE_INFINITY = -1.0 over 0
+        val NaN = 0.0 over 0
+        val ZERO = 0.0 over 1
     }
 }

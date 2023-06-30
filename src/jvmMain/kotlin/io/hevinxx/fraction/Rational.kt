@@ -27,6 +27,8 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
             this == other -> 0
             isNaN() -> 1
             other.isNaN() -> -1
+            this.isPosInf() && other.isPosInf() -> 0
+            this.isNegInf() && other.isNegInf() -> 0
             this.isPosInf() || other.isNegInf() -> 1
             this.isNegInf() || other.isPosInf() -> -1
             else -> (numerator * other.denominator).compareTo(other.numerator * denominator)
@@ -167,9 +169,9 @@ class Rational(val numerator: BigInteger, val denominator: BigInteger) : Number(
     operator fun div(other: Fraction): Fraction = this.toFraction() / other
 
     companion object {
-        val POSITIVE_INFINITY = Rational(1, 0)
-        val NEGATIVE_INFINITY = Rational(-1, 0)
-        val NaN = Rational(0, 0)
-        val ZERO = Rational(0, 1)
+        val POSITIVE_INFINITY = 1 over 0
+        val NEGATIVE_INFINITY = -1 over 0
+        val NaN = 0 over 0
+        val ZERO = 0 over 1
     }
 }
